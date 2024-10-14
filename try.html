@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Community Forum</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/leaflet.css" />
+    
+<script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #3f51b5;
+            --background-gradient: linear-gradient(135deg, #3f51b5, #7e57c2);
+            color: #fff;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+        }
+
+        header, footer {
+            background-color:rgba(0, 0, 0, 0.1);
+            color: white;
+            text-align: center;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 50px;
+        }
+
+
+        header nav a {
+            color: #fff;
+            text-decoration: none;
+            margin: 0 15px;
+            font-size: 1.1em;
+            position: relative;
+            transition: color 0.3s ease-in-out;
+        }
+
+        header nav a:hover {
+            color: #5c6bff;
+        }
+
+        /* Animation on hover */
+        header nav a::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            background-color: #5c6bff;
+            left: 0;
+            bottom: -5px;
+            transition: width 0.4s;
+        }
+
+        header nav a:hover::after {
+            width: 100%;
+        }
+
+        .forum-container {
+            padding: 40px 10%;
+            text-align: center;
+            animation: fadeIn 1.2s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .forum-header {
+            background-color: #3d5ea5;
+            padding: 15px;
+            border-radius: 5px;
+            font-size: 1.3em;
+            margin-bottom: 30px;
+        }
+
+        #map {
+            height: 400px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            animation: slideIn 1.2s ease-in-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .search-container, .issue-container {
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            animation: zoomIn 1.3s ease-in-out;
+        }
+
+        @keyframes zoomIn {
+            from {
+                transform: scale(0.8);
+                opacity: 0;
+            }
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .search-input {
+            width: 60%;
+            padding: 10px;
+            border-radius: 25px;
+            border: none;
+            font-size: 1.1em;
+            background-color: aliceblue;
+            color:black;
+            transition: all 0.3s ease;
+        }
+
+        .search-input:focus {
+            outline: none;
+            box-shadow: 0px 0px 15px #5c6bff;
+        }
+
+        .search-button, .add-button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 25px;
+            background-color: #5c6bff;
+            color: white;
+            cursor: pointer;
+            font-size: 1.1em;
+            transition: background-color 0.3s ease;
+        }
+
+        .search-button:hover, .add-button:hover {
+            background-color: #8d98ff;
+        }
+
+        .issue-list {
+            margin-top: 30px;
+        }
+
+        .issue-item {
+            background-color:aliceblue;
+            padding: 20px;
+            margin-bottom: 15px;
+            border-radius: 15px;
+            position: relative;
+            text-align: left;
+            animation: fadeInUp 1s ease-in-out;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .upvote-section {
+            position: absolute;
+            right: 20px;
+            bottom: 20px;
+            display: flex;
+            align-items: center;
+        }
+
+        .upvote-btn {
+            background-color:transparent;
+            border: none;
+            color: #5c6bff;
+            cursor: pointer;
+            margin-left: 10px;
+            font-size: 1.8em;
+            transition: transform 0.2s ease;
+        }
+
+        .upvote-btn:hover {
+            transform: scale(1.2);
+        }
+        
+.upvote-btn, .downvote-btn {
+  transition: transform 0.2s ease, color 0.2s ease;
+}
+
+.upvote-btn:active, .downvote-btn:active {
+  transform: scale(1.2);
+}
+
+.upvoted, .downvoted {
+  color: #28a745; 
+}
+
+.downvoted {
+  color: #dc3545; 
+}
+
+
+.animated-bg {
+  background: linear-gradient(270deg, #3498db, #2ecc71, #9b59b6);
+  background-size: 600% 600%;
+  animation: gradientShift 15s ease infinite;
+}
+
+@keyframes gradientShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+
+        .upvote-count {
+            color: black;
+            margin-left: 5px;
+            font-size: 1.3em;
+        }
+
+        .comment-input {
+            width: calc(100% - 30px);
+            padding: 10px;
+            border-radius: 10px;
+            margin-top: 10px;
+            border: none;
+            font-size: 1em;
+            background-color: aliceblue;
+            color:black;
+            transition: all 0.3s ease;
+        }
+
+        .comment-input:focus {
+            outline: none;
+            box-shadow: 0px 0px 10px #5c6bff;
+        }
+    
+.map-pin {
+  width: 20px;
+  height: 20px;
+  background-color: #3498db;
+  border-radius: 50%;
+  position: relative;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.5);
+    opacity: 0.5;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+
+.map-pin::after {
+  content: '';
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  border-radius: 50%;
+  box-shadow: 0 0 15px rgba(52, 152, 219, 0.6);
+  opacity: 0.5;
+}
+
+
+        footer {
+            padding: 15px 50px;
+            font-size: 0.9em;
+        }
+
+        footer .social-icons {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+        }
+
+        footer .social-icons a {
+            color: white;
+            font-size: 1.5em;
+            transition: color 0.3s ease;
+        }
+
+        footer .social-icons a:hover {
+            color: #5c6bff;
+        }
+
+        footer .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin: 15px 0;
+        }
+
+        footer .footer-links a {
+            color: white;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        footer .footer-links a:hover {
+            color: #5c6bff;
+        }
+
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo">
+        </div>
+        <nav>
+            <a href="secure.html">Home</a>
+                <a href="try.html">Community Forum</a>
+                <a href="news.html">My Updates</a>
+                <a href="tracker.html">Dashboard</a>
+                <a href="adv.html">Reports</a> 
+                <a href="service.html">Local Services</a>
+                <a href="contact.html">Contact Us</a>
+               
+        </nav>
+    </header>
+
+<div id="particles-js"></div>
+
+
+<script>
+  particlesJS('particles-js', {
+    "particles": {
+      "number": {
+        "value": 80,
+        "density": {
+          "enable": true,
+          "value_area": 800
+        }
+      },
+      "color": { "value": "#ffffff" },
+      "shape": { "type": "circle" },
+      "opacity": {
+        "value": 0.5,
+        "random": false
+      },
+      "size": {
+        "value": 3,
+        "random": true
+      },
+      "line_linked": {
+        "enable": true,
+        "distance": 150,
+        "color": "#ffffff",
+        "opacity": 0.4,
+        "width": 1
+      }
+    },
+    "interactivity": {
+      "detect_on": "canvas",
+      "events": {
+        "onhover": { "enable": true, "mode": "grab" },
+        "onclick": { "enable": true, "mode": "push" },
+      }
+    }
+  });
+</script>
+
+<svg class="badge" width="50" height="50" viewBox="0 0 50 50">
+    <circle cx="25" cy="25" r="20" fill="#FFD700" />
+    <text x="50%" y="50%" text-anchor="middle" fill="#000" font-size="20px" font-family="Arial" dy=".3em">★</text>
+  </svg>
+  
+
+<style>
+  #particles-js {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    z-index: -1;
+  }
+</style>
+
+    <div class="forum-container">
+        <div class="forum-header">
+            WELCOME TO THE COMMUNITY FORUM! <br>
+            PLEASE MAINTAIN A CIVIL AND RESPECTFUL DISCUSSION!
+        </div>
+
+        <div class="search-container">
+            <input class="search-input" type="text" placeholder="Search for an issue">
+            <button class="search-button">Search</button>
+        </div>
+
+        <div id="map"></div>
+
+        <div class="issue-container">
+            <input class="search-input" type="text" placeholder="Add an issue">
+            <button class="add-button">Add Issue</button>
+        </div>
+
+        <div class="issue-list">
+            <div class="issue-item">
+                <input class="comment-input" type="text" placeholder="Add your comment...">
+                <div class="upvote-section">
+                    <span class="upvote-count">0</span>
+                    <button class="upvote-btn" onclick="upvoteIssue(this)">👍</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="social-icons">
+            <a href="#"><i class="fab fa-facebook"></i></a>
+            <a href="#"><i class="fab fa-twitter"></i></a>
+            <a href="#"><i class="fab fa-instagram"></i></a>
+            <a href="#"><i class="fab fa-linkedin"></i></a>
+        </div>
+
+        <div class="footer-links">
+            <a href="#">Privacy Policy</a>
+            <a href="#">Terms & Conditions</a>
+            <a href="#">FAQ</a>
+        </div>
+
+        <p>&copy; 2024 Secure Together. All rights reserved.</p>
+    </footer>
+    
+<script>function assignBadge(user) {
+    if (user.contributions > 100) {
+      user.badge = "Gold";
+    } else if (user.contributions > 50) {
+      user.badge = "Silver";
+    } else {
+      user.badge = "Bronze";
+    }
+  
+   
+    document.querySelector(`#user-${user.id} .badge`).classList.add(user.badge);
+  }
+  </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/leaflet.js"></script>
+    <script>
+        var map = L.map('map').setView([18.4695, 73.889], 13);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap contributors'
+        }).addTo(map);
+
+        function upvoteIssue(button) {
+            let countElem = button.previousElementSibling;
+            let count = parseInt(countElem.innerText);
+            countElem.innerText = count + 1;
+        }
+       
+L.marker([lat, lng], {
+    icon: L.divIcon({
+        className: 'map-pin'
+    })
+}).addTo(map);
+
+    </script>
+</body>
+</html>
