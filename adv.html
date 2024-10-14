@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Reporting & Analytics</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.6.0/chart.min.css">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f2f5;
+            color: #333;
+        }
+        header {
+            background-color: #1f3a93;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            font-size: 24px;
+            position: relative;
+        }
+        nav {
+            display: flex;
+            justify-content: center;
+            background-color: #2e59d9;
+            padding: 10px;
+        }
+        nav a {
+            margin: 0 15px;
+            color: white;
+            text-decoration: none;
+            font-size: 18px;
+            transition: 0.3s;
+        }
+        nav a:hover {
+            color: #d4e6f1;
+            transform: scale(1.1);
+        }
+        .container {
+            padding: 40px 20px;
+        }
+        #map {
+            height: 400px;
+            margin-bottom: 30px;
+            border: 2px solid #ddd;
+        }
+        .dashboard {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 30px;
+        }
+        .chart-container {
+            width: 45%;
+            padding: 30px;
+            background-color: #ffffff;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            transition: transform 0.3s ease-in-out;
+        }
+        .chart-container:hover {
+            transform: scale(1.02);
+        }
+        .chart-container h3 {
+            margin-bottom: 20px;
+            font-size: 20px;
+            color: #1f3a93;
+        }
+        .chart-container canvas {
+            width: 100%;
+            height: 300px;
+        }
+        
+        .filter-container {
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .filter-container select {
+            padding: 10px;
+            font-size: 16px;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+        }
+        .timeline-container {
+            margin-top: 30px;
+        }
+        .timeline {
+            display: flex;
+            justify-content: center;
+            margin: 20px 0;
+        }
+        .timeline div {
+            width: 100px;
+            height: 5px;
+            background-color: #ddd;
+            position: relative;
+        }
+        .timeline div::before {
+            content: '';
+            width: 15px;
+            height: 15px;
+            background-color: #1f3a93;
+            border-radius: 50%;
+            position: absolute;
+            top: -5px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Advanced Reporting & Analytics</h1>
+    </header>
+
+    <nav>
+        <a href="secure.html">Home</a>
+        <a href="tracker.html">Issue Tracker</a>
+        <a href="try.html">Community Forum</a>
+        <a href="news.html">My Updates</a>
+        <a href="adv.html">Reports</a> 
+        <a href="service.html">Local Services</a>
+        <a href="contact.html">Contact Us</a>
+    </nav>
+
+    <div class="container">
+        
+        <div class="filter-container">
+            <h2>Issue Heatmap</h2>
+            <select id="issueFilter">
+                <option value="all">All Issues</option>
+                <option value="water">Vandalism</option>
+                <option value="electricity">Suspicious Activities</option>
+                <option value="roads">Roads</option>
+            </select>
+        </div>
+        <div id="map"></div>
+
+        <div class="dashboard">
+          
+            <div class="chart-container">
+                <h3>Community Sentiment Trends</h3>
+                <canvas id="sentimentChart"></canvas>
+            </div>
+
+  
+            <div class="chart-container">
+                <h3>Issue Resolution Rate</h3>
+                <canvas id="resolutionChart"></canvas>
+            </div>
+        </div>
+
+       
+        <div class="timeline-container">
+            <h3>Issue Timeline</h3>
+            <div class="timeline">
+                <div></div> 
+            </div>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.6.0/chart.min.js"></script>
+    <script>
+
+        var map = L.map('map').setView([18.5204, 73.8567], 13); 
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
+
+        var issuePoints = {
+            'all': [
+                [18.5204, 73.8567], [18.5304, 73.8467], [18.5104, 73.8367], [18.5404, 73.8267]
+            ],
+            'water': [[18.5204, 73.8567], [18.5304, 73.8467]],
+            'electricity': [[18.5104, 73.8367]],
+            'roads': [[18.5404, 73.8267]]
+        };
+
+        var currentLayer = L.layerGroup().addTo(map);
+
+        function updateMap(filter) {
+            currentLayer.clearLayers();
+            issuePoints[filter].forEach(function(point) {
+                L.circle(point, {
+                    color: 'red',
+                    fillColor: '#f03',
+                    fillOpacity: 0.5,
+                    radius: 500
+                }).addTo(currentLayer);
+            });
+        }
+
+        updateMap('all');
+        document.getElementById('issueFilter').addEventListener('change', function(e) {
+            updateMap(e.target.value);
+        });
+
+
+        var ctxSentiment = document.getElementById('sentimentChart').getContext('2d');
+        var sentimentChart = new Chart(ctxSentiment, {
+            type: 'line',
+            data: {
+                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul'],
+                datasets: [{
+                    label: 'Positive Sentiment',
+                    data: [65, 59, 80, 81, 56, 55, 60],
+                    borderColor: 'green',
+                    fill: false
+                },
+                {
+                    label: 'Negative Sentiment',
+                    data: [35, 41, 20, 19, 44, 45, 40],
+                    borderColor: 'red',
+                    fill: false
+                }]
+            },
+            options: {
+                responsive: true
+            }
+        });
+
+        var ctxResolution = document.getElementById('resolutionChart').getContext('2d');
+        var resolutionChart = new Chart(ctxResolution, {
+            type: 'doughnut',
+            data: {
+                labels: ['Resolved', 'Pending', 'In Progress'],
+                datasets: [{
+                    label: 'Resolution Rate',
+                    data: [300, 50, 100],
+                    backgroundColor: ['green', 'yellow', 'red']
+                }]
+            },
+            options: {
+                responsive: true
+            }
+        });
+    </script>
+</body>
+</html>
