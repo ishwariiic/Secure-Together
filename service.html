@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Local Services Integration</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    
+<script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f2f5;
+            margin: 0;
+            padding: 0;
+        }
+        header {
+            background-color: #1f3a93;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            font-size: 24px;
+        }
+        nav {
+            display: flex;
+            justify-content: center;
+            background-color: #2e59d9;
+            padding: 10px;
+        }
+        nav a {
+            margin: 0 15px;
+            color: white;
+            text-decoration: none;
+            font-size: 18px;
+            transition: 0.3s;
+        }
+        nav a:hover {
+            color: #d4e6f1;
+            transform: scale(1.1);
+        }
+        .container {
+            padding: 40px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        h2 {
+            text-align: center;
+            color: #1f3a93;
+            margin-bottom: 30px;
+        }
+        .service-request {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 50px;
+        }
+        .service-request-form, .vendor-list {
+            width: 45%;
+            background-color: white;
+            padding: 20px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+        .service-request-form h3, .vendor-list h3 {
+            color: #1f3a93;
+            margin-bottom: 20px;
+            font-size: 22px;
+        }
+        form input, form select, form textarea, form button {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        form button {
+            background-color: #1f3a93;
+            color: white;
+            border: none;
+            font-size: 16px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        form button:hover {
+            background-color: #163d6f;
+        }
+        .vendor-list {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        .vendor-card {
+            display: flex;
+            justify-content: space-between;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background-color: #f9f9f9;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        .vendor-card img {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+        }
+        .vendor-details {
+            width: 70%;
+        }
+        .vendor-details h4 {
+            margin: 0;
+            color: #1f3a93;
+        }
+        .vendor-details p {
+            margin: 5px 0;
+            color: #555;
+        }
+        .vendor-actions {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        .vendor-actions button {
+            background-color: #1f3a93;
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .vendor-actions button:hover {
+            background-color: #163d6f;
+        }
+        .vendor-actions .rating {
+            margin-top: 10px;
+        }
+        .vendor-actions .rating i {
+            color: gold;
+        }
+        .service-history {
+            margin-top: 50px;
+        }
+        .service-history table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: white;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+        }
+        .service-history table th, .service-history table td {
+            padding: 15px;
+            border: 1px solid #ddd;
+            text-align: left;
+        }
+        .service-history table th {
+            background-color: #1f3a93;
+            color: white;
+        }
+        .service-history table td {
+            color: #555;
+        }
+        .service-history table td.status {
+            font-weight: bold;
+        }
+        .status.completed {
+            color: green;
+        }
+        .status.pending {
+            color: orange;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Local Services Integration</h1>
+    </header>
+
+    <nav>
+        <a href="secure.html">Home</a>
+        <a href="tracker.html">Dashboard</a>
+        <a href="try.html">Community Forum</a>
+        <a href="news.html">My Updates</a>
+        <a href="adv.html">Reports</a>
+        <a href="service.html">Local Services</a>
+        <a href="contact.html">Contact Us</a>
+    </nav>
+
+    <div class="container">
+        <h2>Request Services</h2>
+        <div class="service-request">
+            
+            <div class="service-request-form">
+                <h3>Request a Service</h3>
+                <form id="serviceForm">
+                    <label for="serviceType">Service Type</label>
+                    <select id="serviceType">
+                        <option value="Vandalism">Public property Maintainance </option>
+                        <option value="water-tanker">Street Lights</option>
+                        <option value="plumbing">Potholes</option>
+                    
+                    </select>
+
+                    <label for="address">Service Address</label>
+                    <input type="text" id="address" placeholder="Enter your address">
+
+                    <label for="details">Service Details</label>
+                    <textarea id="details" rows="4" placeholder="Provide more details"></textarea>
+
+                    <button type="submit">Submit Request</button>
+                </form>
+            </div>
+
+<div id="particles-js"></div>
+
+<script>
+  particlesJS('particles-js', {
+    "particles": {
+      "number": {
+        "value": 80,
+        "density": {
+          "enable": true,
+          "value_area": 800
+        }
+      },
+      "color": { "value": "#ffffff" },
+      "shape": { "type": "circle" },
+      "opacity": {
+        "value": 0.5,
+        "random": false
+      },
+      "size": {
+        "value": 3,
+        "random": true
+      },
+      "line_linked": {
+        "enable": true,
+        "distance": 150,
+        "color": "#ffffff",
+        "opacity": 0.4,
+        "width": 1
+      }
+    },
+    "interactivity": {
+      "detect_on": "canvas",
+      "events": {
+        "onhover": { "enable": true, "mode": "grab" },
+        "onclick": { "enable": true, "mode": "push" },
+      }
+    }
+  });
+</script>
+
+
+<style>
+  #particles-js {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    z-index: -1;
+  }
+</style>
+
+            <div class="vendor-list">
+                <h3>Available Authorities</h3>
+
+                <div class="vendor-card">
+                    <img src="https://mighty.tools/mockmind-api/content/human/5.jpg" alt="Plumber">
+                    <div class="vendor-details">
+                        <h4>Mr. Raj Khare</h4>
+                        <p>Position: Associate chief supervisor 
+                            <br>Department: Pune Municipal Corporation – Public Property Maintenance <br>
+                             <br> Contact: 9182289288</p>
+                    </div>
+                    <div class="vendor-actions">
+                        <button>Contact</button>
+                        
+                    </div>
+                </div>
+
+                <div class="vendor-card">
+                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQLMK5bF5yqTb4BfibRcRPdOHfGztWw-iTSPDMUjPYPf5bwGdIOive4zqjoW5DP1zrrS6o&usqp=CAU" alt="Electrician">
+                    <div class="vendor-details">
+                        <h4>Mr. Vikram Singh</h4>
+                        <p>Position: Senior Electrical Engineer 
+                            <br>Department: Pune Municipal Corporation – Street Lighting Division <br>
+                            Contact: 9281818828</p>
+                    </div>
+                    <div class="vendor-actions">
+                        <button>Contact</button>
+                        
+                    </div>
+                </div>
+                <div class="vendor-card">
+                    <img src="https://mighty.tools/mockmind-api/content/human/44.jpg" alt="Electrician">
+                    <div class="vendor-details">
+                        <h4>Ms. Anjali Mehta</h4>
+                        <p>
+                            Position: Noise Regulation Officer
+
+                           <br> Department: Pune Municipal Corporation – Environmental Health Division <br>
+
+                            Contact: 9281818828</p>
+                    </div>
+                    <div class="vendor-actions">
+                        <button>Contact</button>
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="service-history">
+            <h3>Service Request History</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Service</th>
+                        <th>Address</th>
+                        <th>Details</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Vandalism</td>
+                        <td>MG Road-Lane no. 12</td>
+                        <td>Damaged street sign due to vandalism. Needs to be replaced for safety reasons.</td>
+                        <td class="status pending">Pending</td>
+                        
+                    </tr>
+                    <tr>
+                        <td>Irregular Waste Collection</td>
+                        <td>Pune Corporation Area</td>
+                        <td>Trash not collected in the residential area for the past week. Requires immediate attention.</td>
+                        <td class="status completed">Completed</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</body>
+</html>
