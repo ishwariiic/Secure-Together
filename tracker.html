@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Issue Tracker Dashboard</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            background-color: #0a1e3d;
+            color: #ffffff;
+            font-family: 'Arial', sans-serif;
+        }
+        .header {
+            background-color: #1f4068;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .header a {
+            color: #ffa500;
+            text-decoration: none;
+            font-size: 1.2em;
+            margin: 0 15px;
+            transition: color 0.3s;
+        }
+        .header a:hover {
+            color: #ffffff;
+        }
+        .header-logo {
+            font-size: 1.5em;
+            font-weight: bold;
+        }
+        .dashboard-header {
+            text-align: center;
+            padding: 20px;
+            color: #ffa500;
+        }
+        .card {
+            background-color: #162447;
+            color: #ffffff;
+            border: none;
+            margin: 10px;
+            padding: 20px;
+        }
+        .table th, .table td {
+            color: #fff;
+            border: 1px solid #ffa500;
+        }
+        .filters {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+        canvas {
+            max-width: 300px;
+            height: auto;
+            margin: auto;
+        }
+        footer {
+            text-align: center;
+            padding: 20px;
+            color: #ffffff;
+        }
+    </style>
+</head>
+<body>
+
+    <header class="header">
+        <div class="header-logo">Secure Together</div>
+        <nav>
+            <a href="secure.html">Home</a>
+            <a href="try.html">Community Forum</a>
+            <a href="news.html">My Updates</a>
+            <a href="tracker.html">Dashboard</a>
+            <a href="adv.html">Reports</a> 
+            <a href="service.html">Local Services</a>
+            <a href="contact.html">Contact Us</a>
+           
+        </nav>
+    </header>
+
+    <h1 class="dashboard-header">Issue Tracker Dashboard</h1>
+
+    <div class="container">
+        <div class="filters">
+            <div>
+                <label for="category">Category:</label>
+                <select id="category" class="form-select">
+                    <option>Vandalism</option>
+                    <option>Suspicious Activities</option>
+                    <option>Road Infrastructure</option>
+                    <option>Abandoned vehicles</option>
+                    <option>Improper Maintainance</option>
+                </select>
+            </div>
+            <div>
+                <label for="urgency">Urgency:</label>
+                <select id="urgency" class="form-select">
+                    <option>Low</option>
+                    <option>Medium</option>
+                    <option>High</option>
+                </select>
+            </div>
+            <div>
+                <label for="region">Region:</label>
+                <select id="region" class="form-select">
+                    <option>All Regions</option>
+                    <option>North</option>
+                    <option>South</option>
+                    <option>West</option>
+                    <option>East</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-4">
+                <div class="card text-center">
+                    <h3>New</h3>
+                    <p>23 Issues</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card text-center">
+                    <h3>In Progress</h3>
+                    <p>15 Issues</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card text-center">
+                    <h3>Resolved</h3>
+                    <p>35 Issues</p>
+                </div>
+            </div>
+        </div>
+
+        <table class="table table-dark mt-4">
+            <thead>
+                <tr>
+                    <th>Issue ID</th>
+                    <th>Description</th>
+                    <th>Status</th>
+                    <th>Category</th>
+                    <th>Urgency</th>
+                    <th>Region</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>001</td>
+                    <td>Vandalism of walls in sector 12</td>
+                    <td>New</td>
+                    <td>Vandalism</td>
+                    <td>High</td>
+                    <td>North</td>
+                </tr>
+                <tr>
+                    <td>002</td>
+                    <td>Noise complaint against construction site</td>
+                    <td>In Progress</td>
+                    <td>Noise complaint</td>
+                    <td>Medium</td>
+                    <td>South</td>
+                </tr>
+                <tr>
+                    <td>003</td>
+                    <td>Potholes on Apte Road</td>
+                    <td>Resolved</td>
+                    <td>Road Infrastructure</td>
+                    <td>Low</td>
+                    <td>West</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h3 class="text-center mt-4">Resolved vs Pending Issues</h3>
+        <canvas id="issueChart"></canvas>
+
+    </div>
+
+    <footer>
+        © 2024 Secure Together - All rights reserved.
+    </footer>
+
+    <script>
+        // Pie Chart Data
+        const ctx = document.getElementById('issueChart').getContext('2d');
+        const issueChart = new Chart(ctx, {
+            type: 'pie',
+            data: {
+                labels: ['New', 'In Progress', 'Resolved'],
+                datasets: [{
+                    data: [23, 15, 35],
+                    backgroundColor: ['#ff6384', '#36a2eb', '#4caf50'],
+                    borderColor: '#162447',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: 'top',
+                        labels: {
+                            color: '#ffffff' 
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>
