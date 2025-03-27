@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login/Signup - Community Forum</title>
+  <style>
+    :root {
+      --primary: #4a90e2;
+      --primary-hover: #357abd;
+      --secondary: #f5f5f5;
+      --text-primary: #2c3e50;
+      --text-secondary: #34495e;
+      --text-muted: #7f8c8d;
+      --background: #f8fafc;
+      --border: #e2e8f0;
+      --card-bg: #ffffff;
+      --danger: #e53e3e;
+      --success: #38a169;
+      --warning: #f6ad55;
+      --info: #3182ce;
+      --radius: 0.5rem;
+      --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+      --navy: #1a365d;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      color: var(--text-primary);
+      background-color: var(--background);
+      line-height: 1.5;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Navbar */
+    .navbar {
+      background-color: var(--card-bg);
+      box-shadow: var(--shadow);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+
+    .nav-container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 0.75rem 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .nav-brand h1 {
+      font-size: 1.5rem;
+      color: var(--primary);
+      margin: 0;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 1.5rem;
+      align-items: center;
+    }
+
+    .nav-link {
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-weight: 500;
+      font-size: 0.875rem;
+      padding: 0.5rem;
+      border-radius: var(--radius);
+      transition: all 0.2s;
+    }
+
+    .nav-link:hover {
+      color: var(--primary);
+      background-color: rgba(74, 144, 226, 0.1);
+    }
+
+    /* Auth Container */
+    .auth-container {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+    }
+
+    .auth-box {
+      background-color: var(--card-bg);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      width: 100%;
+      max-width: 400px;
+      padding: 2rem;
+    }
+
+    .auth-header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .auth-header h1 {
+      font-size: 1.5rem;
+      color: var(--navy);
+      margin-bottom: 0.5rem;
+    }
+
+    .auth-header p {
+      color: var(--text-muted);
+      font-size: 0.875rem;
+    }
+
+    .auth-tabs {
+      display: flex;
+      margin-bottom: 2rem;
+      border-bottom: 2px solid var(--border);
+    }
+
+    .auth-tab {
+      flex: 1;
+      padding: 1rem;
+      text-align: center;
+      font-weight: 500;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: all 0.2s;
+      border-bottom: 2px solid transparent;
+      margin-bottom: -2px;
+    }
+
+    .auth-tab.active {
+      color: var(--primary);
+      border-bottom-color: var(--primary);
+    }
+
+    .form-group {
+      margin-bottom: 1.25rem;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 500;
+      color: var(--text-secondary);
+      font-size: 0.875rem;
+    }
+
+    .form-group input {
+      width: 100%;
+      padding: 0.75rem;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      font-size: 0.875rem;
+      color: var(--text-primary);
+      transition: all 0.2s;
+    }
+
+    .form-group input:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1);
+    }
+
+    .auth-btn {
+      width: 100%;
+      padding: 0.75rem;
+      background-color: var(--primary);
+      color: white;
+      border: none;
+      border-radius: var(--radius);
+      font-weight: 500;
+      cursor: pointer;
+      transition: background-color 0.2s;
+      margin-top: 1rem;
+    }
+
+    .auth-btn:hover {
+      background-color: var(--primary-hover);
+    }
+
+    .auth-footer {
+      margin-top: 2rem;
+      text-align: center;
+      font-size: 0.875rem;
+      color: var(--text-muted);
+    }
+
+    .auth-footer a {
+      color: var(--primary);
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    .auth-footer a:hover {
+      text-decoration: underline;
+    }
+
+    .error-message {
+      color: var(--danger);
+      font-size: 0.875rem;
+      margin-top: 0.25rem;
+      display: none;
+    }
+
+    .success-message {
+      color: var(--success);
+      font-size: 0.875rem;
+      margin-top: 0.25rem;
+      display: none;
+    }
+
+    .password-requirements {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-top: 0.5rem;
+    }
+
+    .social-login {
+      margin-top: 2rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--border);
+    }
+
+    .social-login-title {
+      text-align: center;
+      font-size: 0.875rem;
+      color: var(--text-muted);
+      margin-bottom: 1rem;
+    }
+
+    .social-buttons {
+      display: grid;
+      gap: 0.75rem;
+    }
+
+    .social-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.75rem;
+      padding: 0.75rem;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background-color: white;
+      color: var(--text-primary);
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .social-btn:hover {
+      background-color: var(--secondary);
+    }
+
+    .social-btn img {
+      width: 1.25rem;
+      height: 1.25rem;
+    }
+
+    @media (max-width: 640px) {
+      .auth-box {
+        padding: 1.5rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Navbar -->
+  <nav class="navbar">
+    <div class="nav-container">
+      <div class="nav-brand">
+        <h1>Community Forum</h1>
+      </div>
+      <div class="nav-links">
+        <a href="index.html" class="nav-link">Home</a>
+        <a href="#" class="nav-link">Community Forum</a>
+        <a href="my-updates.html" class="nav-link">My Updates</a>
+        <a href="dashboard.html" class="nav-link">Dashboard</a>
+        <a href="#" class="nav-link">Reports</a>
+        <a href="local-services.html" class="nav-link">Local Services</a>
+        <a href="#" class="nav-link">Contact Us</a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="auth-container">
+    <div class="auth-box">
+      <div class="auth-header">
+        <h1>Welcome Back</h1>
+        <p>Please login to your account or create a new one</p>
+      </div>
+
+      <div class="auth-tabs">
+        <div class="auth-tab active" data-tab="login">Login</div>
+        <div class="auth-tab" data-tab="signup">Sign Up</div>
+      </div>
+
+      <!-- Login Form -->
+      <form id="login-form" class="auth-form">
+        <div class="form-group">
+          <label for="login-email">Email Address</label>
+          <input type="email" id="login-email" required>
+          <div class="error-message" id="login-email-error"></div>
+        </div>
+        <div class="form-group">
+          <label for="login-password">Password</label>
+          <input type="password" id="login-password" required>
+          <div class="error-message" id="login-password-error"></div>
+        </div>
+        <button type="submit" class="auth-btn">Login</button>
+        <div class="success-message" id="login-success"></div>
+      </form>
+
+      <!-- Signup Form -->
+      <form id="signup-form" class="auth-form" style="display: none;">
+        <div class="form-group">
+          <label for="signup-name">Full Name</label>
+          <input type="text" id="signup-name" required>
+          <div class="error-message" id="signup-name-error"></div>
+        </div>
+        <div class="form-group">
+          <label for="signup-email">Email Address</label>
+          <input type="email" id="signup-email" required>
+          <div class="error-message" id="signup-email-error"></div>
+        </div>
+        <div class="form-group">
+          <label for="signup-password">Password</label>
+          <input type="password" id="signup-password" required>
+          <div class="error-message" id="signup-password-error"></div>
+          <div class="password-requirements">
+            Password must be at least 8 characters long and contain uppercase, lowercase, number, and special character
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="signup-confirm-password">Confirm Password</label>
+          <input type="password" id="signup-confirm-password" required>
+          <div class="error-message" id="signup-confirm-password-error"></div>
+        </div>
+        <button type="submit" class="auth-btn">Create Account</button>
+        <div class="success-message" id="signup-success"></div>
+      </form>
+
+      <div class="social-login">
+        <div class="social-login-title">Or continue with</div>
+        <div class="social-buttons">
+          <button class="social-btn" onclick="socialLogin('google')">
+            <img src="https://www.google.com/favicon.ico" alt="Google">
+            Continue with Google
+          </button>
+          <button class="social-btn" onclick="socialLogin('facebook')">
+            <img src="https://www.facebook.com/favicon.ico" alt="Facebook">
+            Continue with Facebook
+          </button>
+        </div>
+      </div>
+
+      <div class="auth-footer">
+        <a href="#" id="forgot-password">Forgot your password?</a>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Tab switching functionality
+    const authTabs = document.querySelectorAll('.auth-tab');
+    const loginForm = document.getElementById('login-form');
+    const signupForm = document.getElementById('signup-form');
+    const authHeader = document.querySelector('.auth-header h1');
+
+    authTabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        authTabs.forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+        
+        if (tab.dataset.tab === 'login') {
+          loginForm.style.display = 'block';
+          signupForm.style.display = 'none';
+          authHeader.textContent = 'Welcome Back';
+        } else {
+          loginForm.style.display = 'none';
+          signupForm.style.display = 'block';
+          authHeader.textContent = 'Create Account';
+        }
+      });
+    });
+
+    // Form validation and submission
+    loginForm.addEventListener('submit', function(e) {
+      e.preventDefault();
+      const email = document.getElementById('login-email').value;
+      const password = document.getElementById('login-password').value;
+      
+      // Reset error messages
+      document.querySelectorAll('.error-message').forEach(msg => msg.style.display = 'none');
+      
+      // Simple validation
+      let isValid = true;
+      
+      if (!email) {
+        document.getElementById('login-email-error').textContent = 'Email is required';
+        document.getElementById('login-email-error').style.display = 'block';
+        isValid = false;
+      }
+      
+      if (!password) {
+        document.getElementById('login-password-error').textContent = 'Password is required';
+        document.getElementById('login-password-error').style.display = 'block';
+        isValid = false;
+      }
+      
+      if (isValid) {
+        // Here you would typically make an API call to your backend
+        // For demo purposes, we'll just show a success message
+        document.getElementById('login-success').textContent = 'Login successful!';
+        document.getElementById('login-success').style.display = 'block';
+        
+        // Redirect after successful login
+        setTimeout(() => {
+          window.location.href = 'index.html';
+        }, 1500);
+      }
+    });
+
+    signupForm.addEventListener('submit', function(e) {
+      e.preventDefault();
+      const name = document.getElementById('signup-name').value;
+      const email = document.getElementById('signup-email').value;
+      const password = document.getElementById('signup-password').value;
+      const confirmPassword = document.getElementById('signup-confirm-password').value;
+      
+      // Reset error messages
+      document.querySelectorAll('.error-message').forEach(msg => msg.style.display = 'none');
+      
+      // Validation
+      let isValid = true;
+      
+      if (!name) {
+        document.getElementById('signup-name-error').textContent = 'Name is required';
+        document.getElementById('signup-name-error').style.display = 'block';
+        isValid = false;
+      }
+      
+      if (!email) {
+        document.getElementById('signup-email-error').textContent = 'Email is required';
+        document.getElementById('signup-email-error').style.display = 'block';
+        isValid = false;
+      }
+      
+      if (!password) {
+        document.getElementById('signup-password-error').textContent = 'Password is required';
+        document.getElementById('signup-password-error').style.display = 'block';
+        isValid = false;
+      } else if (password.length < 8) {
+        document.getElementById('signup-password-error').textContent = 'Password must be at least 8 characters';
+        document.getElementById('signup-password-error').style.display = 'block';
+        isValid = false;
+      }
+      
+      if (password !== confirmPassword) {
+        document.getElementById('signup-confirm-password-error').textContent = 'Passwords do not match';
+        document.getElementById('signup-confirm-password-error').style.display = 'block';
+        isValid = false;
+      }
+      
+      if (isValid) {
+        // Here you would typically make an API call to your backend
+        // For demo purposes, we'll just show a success message
+        document.getElementById('signup-success').textContent = 'Account created successfully!';
+        document.getElementById('signup-success').style.display = 'block';
+        
+        // Redirect after successful signup
+        setTimeout(() => {
+          window.location.href = 'index.html';
+        }, 1500);
+      }
+    });
+
+    // Social login handlers
+    function socialLogin(provider) {
+      // Here you would implement the OAuth flow for the respective provider
+      alert(`Logging in with ${provider}...`);
+    }
+
+    // Forgot password handler
+    document.getElementById('forgot-password').addEventListener('click', function(e) {
+      e.preventDefault();
+      const email = prompt('Please enter your email address:');
+      if (email) {
+        alert(`Password reset link has been sent to ${email}`);
+      }
+    });
+  </script>
+</body>
+</html> 

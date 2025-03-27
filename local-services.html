@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Local Services - Community Forum</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+  <style>
+    :root {
+      --primary: #4a90e2;
+      --primary-hover: #357abd;
+      --secondary: #f5f5f5;
+      --text-primary: #2c3e50;
+      --text-secondary: #34495e;
+      --text-muted: #7f8c8d;
+      --background: #f8fafc;
+      --border: #e2e8f0;
+      --card-bg: #ffffff;
+      --danger: #e53e3e;
+      --success: #38a169;
+      --warning: #f6ad55;
+      --info: #3182ce;
+      --radius: 0.5rem;
+      --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+      --navy: #1a365d;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      color: var(--text-primary);
+      background-color: var(--background);
+      line-height: 1.5;
+    }
+
+    /* Navbar */
+    .navbar {
+      background-color: var(--card-bg);
+      box-shadow: var(--shadow);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+
+    .nav-container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 0.75rem 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .nav-brand h1 {
+      font-size: 1.5rem;
+      color: var(--primary);
+      margin: 0;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 1.5rem;
+      align-items: center;
+    }
+
+    .nav-link {
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-weight: 500;
+      font-size: 0.875rem;
+      padding: 0.5rem;
+      border-radius: var(--radius);
+      transition: all 0.2s;
+    }
+
+    .nav-link:hover {
+      color: var(--primary);
+      background-color: rgba(74, 144, 226, 0.1);
+    }
+
+    .nav-link.active {
+      color: var(--primary);
+      background-color: rgba(74, 144, 226, 0.1);
+    }
+
+    /* Main Container */
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem;
+    }
+
+    /* Header */
+    .header {
+      margin-bottom: 2rem;
+    }
+
+    .header h1 {
+      font-size: 2rem;
+      color: var(--navy);
+      margin-bottom: 0.5rem;
+    }
+
+    .header p {
+      color: var(--text-muted);
+    }
+
+    /* Main Content Grid */
+    .main-content {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+    }
+
+    /* Service Request Card */
+    .service-request-card {
+      background-color: var(--card-bg);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 1.5rem;
+    }
+
+    .card-title {
+      font-size: 1.25rem;
+      color: var(--navy);
+      margin-bottom: 1.5rem;
+    }
+
+    .form-group {
+      margin-bottom: 1.25rem;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 500;
+      color: var(--text-secondary);
+    }
+
+    .form-group select,
+    .form-group input,
+    .form-group textarea {
+      width: 100%;
+      padding: 0.75rem;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      font-size: 0.875rem;
+      color: var(--text-primary);
+      background-color: white;
+    }
+
+    .form-group textarea {
+      resize: vertical;
+      min-height: 120px;
+    }
+
+    .submit-btn {
+      background-color: var(--primary);
+      color: white;
+      padding: 0.75rem 1.5rem;
+      border: none;
+      border-radius: var(--radius);
+      font-weight: 500;
+      cursor: pointer;
+      width: 100%;
+      transition: background-color 0.2s;
+    }
+
+    .submit-btn:hover {
+      background-color: var(--primary-hover);
+    }
+
+    /* Authorities Card */
+    .authorities-card {
+      background-color: var(--card-bg);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 1.5rem;
+    }
+
+    .authority-list {
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+
+    .authority-item {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 1rem;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      transition: all 0.2s;
+    }
+
+    .authority-item:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow);
+    }
+
+    .authority-avatar {
+      width: 3.5rem;
+      height: 3.5rem;
+      border-radius: 50%;
+      overflow: hidden;
+    }
+
+    .authority-avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .authority-info {
+      flex: 1;
+    }
+
+    .authority-name {
+      font-weight: 600;
+      color: var(--navy);
+      margin-bottom: 0.25rem;
+    }
+
+    .authority-position,
+    .authority-department {
+      font-size: 0.875rem;
+      color: var(--text-muted);
+    }
+
+    .authority-contact {
+      margin-top: 0.5rem;
+      font-size: 0.875rem;
+      color: var(--text-secondary);
+    }
+
+    .contact-btn {
+      background-color: var(--primary);
+      color: white;
+      padding: 0.5rem 1rem;
+      border: none;
+      border-radius: var(--radius);
+      font-size: 0.875rem;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+
+    .contact-btn:hover {
+      background-color: var(--primary-hover);
+    }
+
+    /* Service History */
+    .service-history {
+      grid-column: 1 / -1;
+      background-color: var(--card-bg);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 1.5rem;
+    }
+
+    .history-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 1rem;
+    }
+
+    .history-table th,
+    .history-table td {
+      padding: 1rem;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .history-table th {
+      font-weight: 600;
+      color: var(--text-secondary);
+      background-color: var(--secondary);
+    }
+
+    .history-table tr:hover {
+      background-color: var(--secondary);
+    }
+
+    .status-badge {
+      display: inline-block;
+      padding: 0.25rem 0.75rem;
+      border-radius: 9999px;
+      font-size: 0.75rem;
+      font-weight: 500;
+    }
+
+    .status-badge.pending {
+      background-color: #fff7ed;
+      color: #c2410c;
+    }
+
+    .status-badge.completed {
+      background-color: #ecfdf5;
+      color: #047857;
+    }
+
+    /* Emergency Services Section */
+    .emergency-services {
+      grid-column: 1 / -1;
+      margin-top: 2rem;
+    }
+
+    .emergency-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1.5rem;
+      margin-top: 1rem;
+    }
+
+    .emergency-card {
+      background-color: var(--card-bg);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .emergency-icon {
+      width: 3rem;
+      height: 3rem;
+      border-radius: var(--radius);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      background-color: #fef2f2;
+      color: var(--danger);
+    }
+
+    .emergency-info h3 {
+      color: var(--navy);
+      margin-bottom: 0.25rem;
+    }
+
+    .emergency-info p {
+      font-size: 0.875rem;
+      color: var(--text-muted);
+    }
+
+    .emergency-number {
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: var(--danger);
+    }
+
+    /* Responsive Design */
+    @media (max-width: 1024px) {
+      .main-content {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .nav-links {
+        display: none;
+      }
+
+      .header h1 {
+        font-size: 1.75rem;
+      }
+
+      .emergency-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .history-table {
+        display: block;
+        overflow-x: auto;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Navbar -->
+  <nav class="navbar">
+    <div class="nav-container">
+      <div class="nav-brand">
+        <h1>Community Forum</h1>
+      </div>
+      <div class="nav-links">
+        <a href="index.html" class="nav-link">Home</a>
+        <a href="#" class="nav-link">Community Forum</a>
+        <a href="my-updates.html" class="nav-link">My Updates</a>
+        <a href="dashboard.html" class="nav-link">Dashboard</a>
+        <a href="#" class="nav-link">Reports</a>
+        <a href="local-services.html" class="nav-link active">Local Services</a>
+        <a href="#" class="nav-link">Contact Us</a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container">
+    <header class="header">
+      <h1>Request Services</h1>
+      <p>Submit service requests and connect with local authorities</p>
+    </header>
+
+    <div class="main-content">
+      <!-- Service Request Form -->
+      <div class="service-request-card">
+        <h2 class="card-title">Request a Service</h2>
+        <form id="service-request-form">
+          <div class="form-group">
+            <label for="service-type">Service Type</label>
+            <select id="service-type" required>
+              <option value="">Select a service type</option>
+              <option value="property">Public Property Maintenance</option>
+              <option value="sanitation">Sanitation</option>
+              <option value="lighting">Street Lighting</option>
+              <option value="roads">Road Maintenance</option>
+              <option value="parks">Parks and Recreation</option>
+              <option value="noise">Noise Control</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="service-address">Service Address</label>
+            <input type="text" id="service-address" placeholder="Enter service location" required>
+          </div>
+          <div class="form-group">
+            <label for="service-details">Service Details</label>
+            <textarea id="service-details" placeholder="Provide more details about the service needed" required></textarea>
+          </div>
+          <button type="submit" class="submit-btn">Submit Request</button>
+        </form>
+      </div>
+
+      <!-- Available Authorities -->
+      <div class="authorities-card">
+        <h2 class="card-title">Available Authorities</h2>
+        <div class="authority-list">
+          <div class="authority-item">
+            <div class="authority-avatar">
+              <img src="https://randomuser.me/api/portraits/men/71.jpg" alt="Mr. Raj Khare" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2240%22 height=%2240%22><rect width=%2240%22 height=%2240%22 fill=%22%23e5e7eb%22 /><text x=%2220%22 y=%2225%22 font-size=%2220%22 text-anchor=%22middle%22 fill=%22%23666%22>RK</text></svg>'">
+            </div>
+            <div class="authority-info">
+              <div class="authority-name">Mr. Raj Khare</div>
+              <div class="authority-position">Position: Sub-Inspector</div>
+              <div class="authority-department">Department: Pune Police Station</div>
+              <div class="authority-contact">Contact: 9182289288</div>
+            </div>
+            <button class="contact-btn">Contact</button>
+          </div>
+
+          <div class="authority-item">
+            <div class="authority-avatar">
+              <img src="https://randomuser.me/api/portraits/men/75.jpg" alt="Mr. Vikram Singh" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2240%22 height=%2240%22><rect width=%2240%22 height=%2240%22 fill=%22%23e5e7eb%22 /><text x=%2220%22 y=%2225%22 font-size=%2220%22 text-anchor=%22middle%22 fill=%22%23666%22>VS</text></svg>'">
+            </div>
+            <div class="authority-info">
+              <div class="authority-name">Mr. Vikram Singh</div>
+              <div class="authority-position">Position: Senior Electrical Engineer</div>
+              <div class="authority-department">Department: Street Lighting Division</div>
+              <div class="authority-contact">Contact: 9281818828</div>
+            </div>
+            <button class="contact-btn">Contact</button>
+          </div>
+
+          <div class="authority-item">
+            <div class="authority-avatar">
+              <img src="https://randomuser.me/api/portraits/women/50.jpg" alt="Ms. Anjali Mehta" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2240%22 height=%2240%22><rect width=%2240%22 height=%2240%22 fill=%22%23e5e7eb%22 /><text x=%2220%22 y=%2225%22 font-size=%2220%22 text-anchor=%22middle%22 fill=%22%23666%22>AM</text></svg>'">
+            </div>
+            <div class="authority-info">
+              <div class="authority-name">Ms. Anjali Mehta</div>
+              <div class="authority-position">Position: Noise Regulation Officer</div>
+              <div class="authority-department">Department: Environmental Health Division</div>
+              <div class="authority-contact">Contact: 9281818828</div>
+            </div>
+            <button class="contact-btn">Contact</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Service History -->
+      <div class="service-history">
+        <h2 class="card-title">Service Request History</h2>
+        <table class="history-table">
+          <thead>
+            <tr>
+              <th>Service</th>
+              <th>Address</th>
+              <th>Details</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Vandalism</td>
+              <td>MG Road-Lane no. 12</td>
+              <td>Damaged street sign due to vandalism. Needs to be replaced for safety reasons.</td>
+              <td><span class="status-badge pending">Pending</span></td>
+            </tr>
+            <tr>
+              <td>Irregular Waste Collection</td>
+              <td>Pune Corporation Area</td>
+              <td>Trash not collected in the residential area for the past week. Could contain suspicious material.</td>
+              <td><span class="status-badge completed">Completed</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Emergency Services Section -->
+      <div class="emergency-services">
+        <h2 class="card-title">Emergency Services</h2>
+        <div class="emergency-grid">
+          <div class="emergency-card">
+            <div class="emergency-icon">🚓</div>
+            <div class="emergency-info">
+              <h3>Police Emergency</h3>
+              <p>24/7 Emergency Response</p>
+              <div class="emergency-number">100</div>
+            </div>
+          </div>
+          <div class="emergency-card">
+            <div class="emergency-icon">🚑</div>
+            <div class="emergency-info">
+              <h3>Medical Emergency</h3>
+              <p>Ambulance Services</p>
+              <div class="emergency-number">108</div>
+            </div>
+          </div>
+          <div class="emergency-card">
+            <div class="emergency-icon">🚒</div>
+            <div class="emergency-info">
+              <h3>Fire Emergency</h3>
+              <p>Fire & Rescue Services</p>
+              <div class="emergency-number">101</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Form submission handler
+    document.getElementById('service-request-form').addEventListener('submit', function(e) {
+      e.preventDefault();
+      // Add your form submission logic here
+      alert('Service request submitted successfully!');
+      this.reset();
+    });
+
+    // Contact button handlers
+    document.querySelectorAll('.contact-btn').forEach(button => {
+      button.addEventListener('click', function() {
+        const authorityInfo = this.previousElementSibling;
+        const contact = authorityInfo.querySelector('.authority-contact').textContent.split(': ')[1];
+        alert(`Connecting to ${contact}...`);
+      });
+    });
+  </script>
+</body>
+</html> 
