@@ -4,7 +4,7 @@ document.addEventListener('DOMContentLoaded', function() {
     {
       id: '1',
       title: 'Broken Street Light',
-      description: 'The street light at the corner of Main St and Oak Ave has been out for over a week, creating a safety hazard at night.',
+      description: 'The street light at the corner of MG Road and Oak Society has been out for over a week, creating a safety hazard at night.',
       category: 'infrastructure',
       location: { lat: 18.5204, lng: 73.8567 }, // Pune coordinates
       upvotes: 24,
@@ -12,7 +12,7 @@ document.addEventListener('DOMContentLoaded', function() {
       createdAt: '2023-11-10T14:30:00Z',
       createdBy: {
         id: 'user1',
-        name: 'Jane Smith',
+        name: 'Smita Apte',
         avatar: '/placeholder.svg?height=40&width=40',
       },
       comments: [
@@ -22,7 +22,7 @@ document.addEventListener('DOMContentLoaded', function() {
           createdAt: '2023-11-11T09:15:00Z',
           user: {
             id: 'user2',
-            name: 'Mark Johnson',
+            name: 'Mahesh ',
             avatar: '/placeholder.svg?height=40&width=40',
           },
         },
@@ -39,7 +39,7 @@ document.addEventListener('DOMContentLoaded', function() {
       createdAt: '2023-11-12T10:45:00Z',
       createdBy: {
         id: 'user3',
-        name: 'Alex Chen',
+        name: 'Alka Singh',
         avatar: '/placeholder.svg?height=40&width=40',
       },
       comments: [],
@@ -55,7 +55,7 @@ document.addEventListener('DOMContentLoaded', function() {
       createdAt: '2023-11-09T16:20:00Z',
       createdBy: {
         id: 'user4',
-        name: 'Sam Taylor',
+        name: 'Samiksha',
         avatar: '/placeholder.svg?height=40&width=40',
       },
       comments: [
@@ -65,7 +65,7 @@ document.addEventListener('DOMContentLoaded', function() {
           createdAt: '2023-11-09T18:30:00Z',
           user: {
             id: 'user5',
-            name: 'Taylor Reed',
+            name: 'Trisha',
             avatar: '/placeholder.svg?height=40&width=40',
           },
         },
@@ -75,7 +75,7 @@ document.addEventListener('DOMContentLoaded', function() {
           createdAt: '2023-11-10T09:45:00Z',
           user: {
             id: 'user1',
-            name: 'Jane Smith',
+            name: 'Jiya sharma',
             avatar: '/placeholder.svg?height=40&width=40',
           },
         },
